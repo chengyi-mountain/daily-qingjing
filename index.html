@@ -10,12 +10,11 @@
   html, body {
     height: 100%;
     font-family: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "Songti SC", serif;
-    color: #d8d4c8;
     overflow: hidden;
+    transition: background 1.5s ease, color 1.5s ease;
   }
 
   body {
-    background: radial-gradient(ellipse at 50% 30%, #2a2d33 0%, #1a1c20 50%, #0e0f12 100%);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -24,55 +23,72 @@
     padding: 2rem;
   }
 
-  /* 远山剪影 */
+  /* ===== 夜晚主题（默认） ===== */
+  body {
+    background: radial-gradient(ellipse at 50% 30%, #2a2d33 0%, #1a1c20 50%, #0e0f12 100%);
+    color: #d8d4c8;
+  }
+  body .line { color: #e8e4d8; text-shadow: 0 0 30px rgba(200,200,180,0.1); }
+  body .date { color: #8a8a8a; }
+  body .clock { color: #b8b4a8; }
+  body .source { color: #7a7a7a; }
+  body .footer { color: #5a5a5a; }
+  body .divider { background: #4a4a4a; }
+  body .mountains path:first-child { fill: #1f2228; }
+  body .mountains path:last-child { fill: #171920; }
+  body .mist { background: linear-gradient(to top, rgba(200,200,200,0.07), transparent); }
+  body .actions button { border-color: #3a3a3a; color: #8a8a8a; }
+  body .actions button:hover { border-color: #b85450; color: #d8d4c8; }
+  body .seal { border-color: #8b3a3a; color: #b85450; }
+
+  /* ===== 白天主题 ===== */
+  body.day {
+    background: radial-gradient(ellipse at 50% 30%, #e8e2d0 0%, #d4cdb8 50%, #bfb8a0 100%);
+    color: #4a4538;
+  }
+  body.day .line { color: #3a3528; text-shadow: 0 0 20px rgba(100,90,60,0.1); }
+  body.day .date { color: #8a8270; }
+  body.day .clock { color: #6a6250; }
+  body.day .source { color: #9a9280; }
+  body.day .footer { color: #8a8270; }
+  body.day .divider { background: #b0a890; }
+  body.day .mountains path:first-child { fill: #b0a890; opacity: 0.5; }
+  body.day .mountains path:last-child { fill: #9a9280; opacity: 0.5; }
+  body.day .mist { background: linear-gradient(to top, rgba(255,255,255,0.25), transparent); }
+  body.day .actions button { border-color: #a09880; color: #7a7260; }
+  body.day .actions button:hover { border-color: #8b3a3a; color: #3a3528; }
+  body.day .seal { border-color: #8b3a3a; color: #8b3a3a; }
+
+  /* 远山 */
   .mountains {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 45%;
+    bottom: 0; left: 0;
+    width: 100%; height: 45%;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.6;
+    transition: opacity 1.5s ease;
   }
 
-  /* 雾气 —— 双层飘动 */
+  /* 双层雾气 */
   .mist {
     position: absolute;
     left: -20%;
     width: 140%;
     height: 30%;
-    background: linear-gradient(to top, rgba(200,200,200,0.07), transparent);
     filter: blur(25px);
     pointer-events: none;
   }
-  .mist-1 {
-    bottom: 8%;
-    animation: drift1 40s linear infinite;
-  }
-  .mist-2 {
-    bottom: 22%;
-    height: 20%;
-    opacity: 0.6;
-    animation: drift2 60s linear infinite reverse;
-  }
-  @keyframes drift1 {
-    0%   { transform: translateX(-5%); }
-    50%  { transform: translateX(5%); }
-    100% { transform: translateX(-5%); }
-  }
-  @keyframes drift2 {
-    0%   { transform: translateX(5%); }
-    50%  { transform: translateX(-5%); }
-    100% { transform: translateX(5%); }
-  }
+  .mist-1 { bottom: 8%; animation: drift1 40s linear infinite; }
+  .mist-2 { bottom: 22%; height: 20%; opacity: 0.6; animation: drift2 60s linear infinite reverse; }
+  @keyframes drift1 { 0%{transform:translateX(-5%)} 50%{transform:translateX(5%)} 100%{transform:translateX(-5%)} }
+  @keyframes drift2 { 0%{transform:translateX(5%)} 50%{transform:translateX(-5%)} 100%{transform:translateX(5%)} }
 
-  /* 顶部日期 */
+  /* 顶部 */
   .date {
     position: absolute;
-    top: 2.5rem;
-    font-size: 0.95rem;
+    top: 2rem;
+    font-size: 0.9rem;
     letter-spacing: 0.4em;
-    color: #8a8a8a;
     font-family: "Songti SC", serif;
     text-align: center;
     line-height: 2;
@@ -80,88 +96,79 @@
   .clock {
     font-size: 1.1rem;
     letter-spacing: 0.3em;
-    color: #b8b4a8;
     font-variant-numeric: tabular-nums;
   }
 
-  /* 中央诗句 —— 带淡入 */
+  /* 中央诗句 */
   .verse {
     max-width: 720px;
     text-align: center;
     z-index: 2;
-    position: relative;
     transition: opacity 0.8s ease, transform 0.8s ease;
   }
-  .verse.fade {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
+  .verse.fade { opacity: 0; transform: translateY(10px); }
   .verse .line {
-    font-size: clamp(1.5rem, 3.5vw, 2.4rem);
-    line-height: 2.2;
-    letter-spacing: 0.15em;
-    color: #e8e4d8;
-    text-shadow: 0 0 30px rgba(200,200,180,0.1);
+    font-size: clamp(1.3rem, 4vw, 2.2rem);
+    line-height: 2;
+    letter-spacing: 0.12em;
   }
-
   .verse .source {
-    margin-top: 3rem;
-    font-size: 0.95rem;
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
     letter-spacing: 0.5em;
-    color: #7a7a7a;
   }
 
-  /* 底部操作按钮 */
+  /* 按钮 */
   .actions {
     position: absolute;
     bottom: 4.5rem;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     z-index: 3;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .actions button {
     background: transparent;
-    border: 1px solid #3a3a3a;
-    color: #8a8a8a;
-    padding: 8px 22px;
+    border: 1px solid;
+    padding: 8px 20px;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     letter-spacing: 0.3em;
     cursor: pointer;
     transition: all 0.3s ease;
   }
-  .actions button:hover {
-    border-color: #b85450;
-    color: #d8d4c8;
-  }
 
-  /* 底部落款 */
+  /* 落款 */
   .footer {
     position: absolute;
     bottom: 1.5rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.3em;
-    color: #5a5a5a;
   }
-
   .seal {
     display: inline-block;
     margin-left: 0.5rem;
     padding: 2px 8px;
-    border: 1px solid #8b3a3a;
-    color: #b85450;
-    font-size: 0.75rem;
+    border: 1px solid;
+    font-size: 0.7rem;
     letter-spacing: 0.2em;
     transform: translateY(-2px);
   }
 
-  /* 分隔线 */
   .divider {
-    width: 60px;
-    height: 1px;
-    background: #4a4a4a;
-    margin: 2rem auto;
+    width: 60px; height: 1px;
+    margin: 1.8rem auto;
+  }
+
+  /* 手机端 */
+  @media (max-width: 600px) {
+    .date { top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.25em; }
+    .clock { font-size: 1rem; }
+    .verse .line { letter-spacing: 0.08em; }
+    .actions { bottom: 4rem; gap: 0.6rem; }
+    .actions button { padding: 6px 14px; font-size: 0.75rem; letter-spacing: 0.2em; }
+    .footer { font-size: 0.65rem; }
   }
 </style>
 </head>
@@ -180,8 +187,8 @@
 </div>
 
 <svg class="mountains" viewBox="0 0 1440 400" preserveAspectRatio="none">
-  <path d="M0,300 L120,200 L240,260 L360,150 L480,230 L600,180 L720,250 L840,170 L960,240 L1080,190 L1200,260 L1320,210 L1440,280 L1440,400 L0,400 Z" fill="#1f2228"/>
-  <path d="M0,340 L180,280 L320,320 L480,260 L640,310 L800,270 L960,320 L1120,280 L1280,320 L1440,290 L1440,400 L0,400 Z" fill="#171920"/>
+  <path d="M0,300 L120,200 L240,260 L360,150 L480,230 L600,180 L720,250 L840,170 L960,240 L1080,190 L1200,260 L1320,210 L1440,280 L1440,400 L0,400 Z"/>
+  <path d="M0,340 L180,280 L320,320 L480,260 L640,310 L800,270 L960,320 L1120,280 L1280,320 L1440,290 L1440,400 L0,400 Z"/>
 </svg>
 <div class="mist mist-1"></div>
 <div class="mist mist-2"></div>
@@ -197,29 +204,60 @@
 </div>
 
 <script>
+  // 《清静经》金句 30 句
   const verses = [
     ["大道无形，生育天地；", "大道无情，运行日月；大道无名，长养万物。"],
+    ["吾不知其名，", "强名曰道。"],
+    ["夫道者：有清有浊，有动有静；", "天清地浊，天动地静。"],
+    ["降本流末，", "而生万物。"],
+    ["清者浊之源，", "动者静之基。"],
     ["人能常清静，", "天地悉皆归。"],
+    ["夫人神好清，而心扰之；", "人心好静，而欲牵之。"],
     ["常能遣其欲，而心自静；", "澄其心，而神自清。"],
+    ["自然六欲不生，", "三毒消灭。"],
+    ["所以不能者，", "为心未澄，欲未遣也。"],
     ["内观其心，心无其心；", "外观其形，形无其形；远观其物，物无其物。"],
+    ["三者既悟，", "唯见于空。"],
     ["观空亦空，", "空无所空。"],
-    ["寂无所寂，欲岂能生；", "欲既不生，即是真静。"],
+    ["所空既无，", "无无亦无。"],
+    ["无无既无，", "湛然常寂。"],
+    ["寂无所寂，", "欲岂能生。"],
+    ["欲既不生，", "即是真静。"],
     ["真常应物，真常得性；", "常应常静，常清静矣。"],
     ["如此清静，渐入真道；", "既入真道，名为得道。"],
+    ["虽名得道，", "实无所得。"],
+    ["为化众生，", "名为得道。"],
+    ["能悟之者，", "可传圣道。"],
     ["上士无争，下士好争；", "上德不德，下德执德。"],
+    ["执著之者，", "不名道德。"],
     ["众生所以不得真道者，", "为有妄心。"],
+    ["既有妄心，即惊其神；", "既惊其神，即著万物。"],
+    ["既著万物，即生贪求；", "既生贪求，即是烦恼。"],
     ["烦恼妄想，忧苦身心；", "便遭浊辱，流浪生死。"],
-    ["真常之道，悟者自得；", "得悟道者，常清静矣。"],
-    ["吾不知其名，", "强名曰道。"],
-    ["清者浊之源，", "动者静之基。"],
-    ["夫人神好清，而心扰之；", "人心好静，而欲牵之。"]
+    ["常沉苦海，", "永失真道。"],
+    ["真常之道，悟者自得；", "得悟道者，常清静矣。"]
   ];
+
+  // 木鱼音效（Web Audio 合成，无需外部文件）
+  let audioCtx = null;
+  function woodFish() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.frequency.value = 600;
+      o.type = "sine";
+      g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(); o.stop(audioCtx.currentTime + 0.3);
+    } catch(e) {}
+  }
 
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
-  const dayOfYear = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+  const dayOfYear = Math.floor((now - start) / 86400000);
   const todayIndex = dayOfYear % verses.length;
-
   let currentIndex = todayIndex;
 
   const verseEl = document.getElementById("verse");
@@ -228,6 +266,7 @@
 
   function showVerse(i) {
     verseEl.classList.add("fade");
+    woodFish();
     setTimeout(() => {
       line1.textContent = verses[i][0];
       line2.textContent = verses[i][1];
@@ -235,41 +274,39 @@
     }, 600);
   }
 
-  // 初始渲染（无动画）
   line1.textContent = verses[currentIndex][0];
   line2.textContent = verses[currentIndex][1];
 
   document.getElementById("btnNext").onclick = () => {
-    currentIndex = (currentIndex + 1) % verses.length;
-    showVerse(currentIndex);
+    currentIndex = (currentIndex + 1) % verses.length; showVerse(currentIndex);
   };
   document.getElementById("btnPrev").onclick = () => {
-    currentIndex = (currentIndex - 1 + verses.length) % verses.length;
-    showVerse(currentIndex);
+    currentIndex = (currentIndex - 1 + verses.length) % verses.length; showVerse(currentIndex);
   };
   document.getElementById("btnToday").onclick = () => {
-    currentIndex = todayIndex;
-    showVerse(currentIndex);
+    currentIndex = todayIndex; showVerse(currentIndex);
   };
-
-  // 键盘左右方向键也能翻
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") document.getElementById("btnNext").click();
     if (e.key === "ArrowLeft") document.getElementById("btnPrev").click();
   });
 
+  // 实时时钟 + 白天/夜晚自动切换
   const week = ["日","一","二","三","四","五","六"];
-  function renderDate() {
+  function tick() {
     const n = new Date();
     document.getElementById("date").textContent =
       n.getFullYear() + " 年 " + (n.getMonth()+1) + " 月 " + n.getDate() + " 日 · 星期" + week[n.getDay()];
-    const h = String(n.getHours()).padStart(2, "0");
-    const m = String(n.getMinutes()).padStart(2, "0");
-    const s = String(n.getSeconds()).padStart(2, "0");
+    const h = String(n.getHours()).padStart(2,"0");
+    const m = String(n.getMinutes()).padStart(2,"0");
+    const s = String(n.getSeconds()).padStart(2,"0");
     document.getElementById("clock").textContent = h + " : " + m + " : " + s;
+    // 6:00-18:00 白天，其余夜晚
+    const hour = n.getHours();
+    document.body.classList.toggle("day", hour >= 6 && hour < 18);
   }
-  renderDate();
-  setInterval(renderDate, 1000);
+  tick();
+  setInterval(tick, 1000);
 </script>
 
 </body>
