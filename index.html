@@ -35,16 +35,35 @@
     opacity: 0.5;
   }
 
-  /* 雾气 */
+  /* 雾气 —— 双层飘动 */
   .mist {
     position: absolute;
-    bottom: 10%;
-    left: -10%;
-    width: 120%;
+    left: -20%;
+    width: 140%;
     height: 30%;
-    background: linear-gradient(to top, rgba(200,200,200,0.06), transparent);
-    filter: blur(20px);
+    background: linear-gradient(to top, rgba(200,200,200,0.07), transparent);
+    filter: blur(25px);
     pointer-events: none;
+  }
+  .mist-1 {
+    bottom: 8%;
+    animation: drift1 40s linear infinite;
+  }
+  .mist-2 {
+    bottom: 22%;
+    height: 20%;
+    opacity: 0.6;
+    animation: drift2 60s linear infinite reverse;
+  }
+  @keyframes drift1 {
+    0%   { transform: translateX(-5%); }
+    50%  { transform: translateX(5%); }
+    100% { transform: translateX(-5%); }
+  }
+  @keyframes drift2 {
+    0%   { transform: translateX(5%); }
+    50%  { transform: translateX(-5%); }
+    100% { transform: translateX(5%); }
   }
 
   /* 顶部日期 */
@@ -57,12 +76,17 @@
     font-family: "Songti SC", serif;
   }
 
-  /* 中央诗句 */
+  /* 中央诗句 —— 带淡入 */
   .verse {
     max-width: 720px;
     text-align: center;
     z-index: 2;
     position: relative;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .verse.fade {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
   .verse .line {
@@ -80,10 +104,34 @@
     color: #7a7a7a;
   }
 
+  /* 底部操作按钮 */
+  .actions {
+    position: absolute;
+    bottom: 4.5rem;
+    display: flex;
+    gap: 1.5rem;
+    z-index: 3;
+  }
+  .actions button {
+    background: transparent;
+    border: 1px solid #3a3a3a;
+    color: #8a8a8a;
+    padding: 8px 22px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .actions button:hover {
+    border-color: #b85450;
+    color: #d8d4c8;
+  }
+
   /* 底部落款 */
   .footer {
     position: absolute;
-    bottom: 2rem;
+    bottom: 1.5rem;
     font-size: 0.8rem;
     letter-spacing: 0.3em;
     color: #5a5a5a;
@@ -113,7 +161,7 @@
 
 <div class="date" id="date"></div>
 
-<div class="verse">
+<div class="verse" id="verse">
   <div class="line" id="line1"></div>
   <div class="line" id="line2"></div>
   <div class="divider"></div>
@@ -124,14 +172,20 @@
   <path d="M0,300 L120,200 L240,260 L360,150 L480,230 L600,180 L720,250 L840,170 L960,240 L1080,190 L1200,260 L1320,210 L1440,280 L1440,400 L0,400 Z" fill="#1f2228"/>
   <path d="M0,340 L180,280 L320,320 L480,260 L640,310 L800,270 L960,320 L1120,280 L1280,320 L1440,290 L1440,400 L0,400 Z" fill="#171920"/>
 </svg>
-<div class="mist"></div>
+<div class="mist mist-1"></div>
+<div class="mist mist-2"></div>
+
+<div class="actions">
+  <button id="btnPrev">上一句</button>
+  <button id="btnToday">今日</button>
+  <button id="btnNext">下一句</button>
+</div>
 
 <div class="footer">
   澄一 · 每日清静<span class="seal">澄一</span>
 </div>
 
 <script>
-  // 《清静经》金句，每天轮换一句
   const verses = [
     ["大道无形，生育天地；", "大道无情，运行日月；大道无名，长养万物。"],
     ["人能常清静，", "天地悉皆归。"],
@@ -150,17 +204,49 @@
     ["夫人神好清，而心扰之；", "人心好静，而欲牵之。"]
   ];
 
-  // 按"当年第几天"取一句，保证每天固定
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start;
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const v = verses[dayOfYear % verses.length];
+  const dayOfYear = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+  const todayIndex = dayOfYear % verses.length;
 
-  document.getElementById("line1").textContent = v[0];
-  document.getElementById("line2").textContent = v[1];
+  let currentIndex = todayIndex;
 
-  // 日期显示
+  const verseEl = document.getElementById("verse");
+  const line1 = document.getElementById("line1");
+  const line2 = document.getElementById("line2");
+
+  function showVerse(i) {
+    verseEl.classList.add("fade");
+    setTimeout(() => {
+      line1.textContent = verses[i][0];
+      line2.textContent = verses[i][1];
+      verseEl.classList.remove("fade");
+    }, 600);
+  }
+
+  // 初始渲染（无动画）
+  line1.textContent = verses[currentIndex][0];
+  line2.textContent = verses[currentIndex][1];
+
+  document.getElementById("btnNext").onclick = () => {
+    currentIndex = (currentIndex + 1) % verses.length;
+    showVerse(currentIndex);
+  };
+  document.getElementById("btnPrev").onclick = () => {
+    currentIndex = (currentIndex - 1 + verses.length) % verses.length;
+    showVerse(currentIndex);
+  };
+  document.getElementById("btnToday").onclick = () => {
+    currentIndex = todayIndex;
+    showVerse(currentIndex);
+  };
+
+  // 键盘左右方向键也能翻
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") document.getElementById("btnNext").click();
+    if (e.key === "ArrowLeft") document.getElementById("btnPrev").click();
+  });
+
   const week = ["日","一","二","三","四","五","六"][now.getDay()];
   document.getElementById("date").textContent =
     now.getFullYear() + " 年 " + (now.getMonth()+1) + " 月 " + now.getDate() + " 日 · 星期" + week;
