@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日清静 · 澄一</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    font-family: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "Songti SC", serif;
+    color: #d8d4c8;
+    overflow: hidden;
+  }
+
+  body {
+    background: radial-gradient(ellipse at 50% 30%, #2a2d33 0%, #1a1c20 50%, #0e0f12 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  /* 远山剪影 */
+  .mountains {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* 雾气 */
+  .mist {
+    position: absolute;
+    bottom: 10%;
+    left: -10%;
+    width: 120%;
+    height: 30%;
+    background: linear-gradient(to top, rgba(200,200,200,0.06), transparent);
+    filter: blur(20px);
+    pointer-events: none;
+  }
+
+  /* 顶部日期 */
+  .date {
+    position: absolute;
+    top: 2.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.4em;
+    color: #8a8a8a;
+    font-family: "Songti SC", serif;
+  }
+
+  /* 中央诗句 */
+  .verse {
+    max-width: 720px;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+  }
+
+  .verse .line {
+    font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+    line-height: 2.2;
+    letter-spacing: 0.15em;
+    color: #e8e4d8;
+    text-shadow: 0 0 30px rgba(200,200,180,0.1);
+  }
+
+  .verse .source {
+    margin-top: 3rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.5em;
+    color: #7a7a7a;
+  }
+
+  /* 底部落款 */
+  .footer {
+    position: absolute;
+    bottom: 2rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: #5a5a5a;
+  }
+
+  .seal {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 2px 8px;
+    border: 1px solid #8b3a3a;
+    color: #b85450;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    transform: translateY(-2px);
+  }
+
+  /* 分隔线 */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: #4a4a4a;
+    margin: 2rem auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="date" id="date"></div>
+
+<div class="verse">
+  <div class="line" id="line1"></div>
+  <div class="line" id="line2"></div>
+  <div class="divider"></div>
+  <div class="source">太上老君说常清静经</div>
+</div>
+
+<svg class="mountains" viewBox="0 0 1440 400" preserveAspectRatio="none">
+  <path d="M0,300 L120,200 L240,260 L360,150 L480,230 L600,180 L720,250 L840,170 L960,240 L1080,190 L1200,260 L1320,210 L1440,280 L1440,400 L0,400 Z" fill="#1f2228"/>
+  <path d="M0,340 L180,280 L320,320 L480,260 L640,310 L800,270 L960,320 L1120,280 L1280,320 L1440,290 L1440,400 L0,400 Z" fill="#171920"/>
+</svg>
+<div class="mist"></div>
+
+<div class="footer">
+  澄一 · 每日清静<span class="seal">澄一</span>
+</div>
+
+<script>
+  // 《清静经》金句，每天轮换一句
+  const verses = [
+    ["大道无形，生育天地；", "大道无情，运行日月；大道无名，长养万物。"],
+    ["人能常清静，", "天地悉皆归。"],
+    ["常能遣其欲，而心自静；", "澄其心，而神自清。"],
+    ["内观其心，心无其心；", "外观其形，形无其形；远观其物，物无其物。"],
+    ["观空亦空，", "空无所空。"],
+    ["寂无所寂，欲岂能生；", "欲既不生，即是真静。"],
+    ["真常应物，真常得性；", "常应常静，常清静矣。"],
+    ["如此清静，渐入真道；", "既入真道，名为得道。"],
+    ["上士无争，下士好争；", "上德不德，下德执德。"],
+    ["众生所以不得真道者，", "为有妄心。"],
+    ["烦恼妄想，忧苦身心；", "便遭浊辱，流浪生死。"],
+    ["真常之道，悟者自得；", "得悟道者，常清静矣。"],
+    ["吾不知其名，", "强名曰道。"],
+    ["清者浊之源，", "动者静之基。"],
+    ["夫人神好清，而心扰之；", "人心好静，而欲牵之。"]
+  ];
+
+  // 按"当年第几天"取一句，保证每天固定
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const v = verses[dayOfYear % verses.length];
+
+  document.getElementById("line1").textContent = v[0];
+  document.getElementById("line2").textContent = v[1];
+
+  // 日期显示
+  const week = ["日","一","二","三","四","五","六"][now.getDay()];
+  document.getElementById("date").textContent =
+    now.getFullYear() + " 年 " + (now.getMonth()+1) + " 月 " + now.getDate() + " 日 · 星期" + week;
+</script>
+
+</body>
+</html>
