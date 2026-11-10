@@ -309,5 +309,27 @@
   setInterval(tick, 1000);
 </script>
 
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+<button id="musicBtn" onclick="toggleBgm()" style="position:fixed;bottom:20px;right:20px;width:44px;height:44px;border-radius:50%;border:1px solid #8a7a5a;background:rgba(255,255,255,0.6);cursor:pointer;font-size:18px;z-index:999">🔇</button>
+<script>
+const bgm = document.getElementById('bgm');
+const musicBtn = document.getElementById('musicBtn');
+let bgmOn = false;
+function toggleBgm(){
+  if(bgmOn){ bgm.pause(); bgmOn=false; musicBtn.textContent='🔇'; }
+  else{ bgm.play(); bgmOn=true; musicBtn.textContent='🎵'; }
+}
+// 第一次点击页面任意位置自动播放音乐
+function tryAutoPlay(){
+  if(!bgmOn){
+    bgm.play().then(()=>{ bgmOn=true; musicBtn.textContent='🎵'; }).catch(()=>{});
+  }
+  document.removeEventListener('click', tryAutoPlay);
+  document.removeEventListener('keydown', tryAutoPlay);
+}
+document.addEventListener('click', tryAutoPlay);
+document.addEventListener('keydown', tryAutoPlay);
+</script>
+
 </body>
 </html>
