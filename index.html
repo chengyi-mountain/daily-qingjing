@@ -233,13 +233,12 @@
   }
   .font-controls {
     position: fixed;
-    bottom: 100px; right: 30px;
-    display: none;
+    bottom: 20px; right: 30px;
+    display: flex;
     flex-direction: column;
     gap: 0.5rem;
     z-index: 101;
   }
-  .font-controls.show { display: flex; }
   .font-controls button {
     width: 44px; height: 44px;
     border-radius: 50%;
@@ -249,6 +248,8 @@
     cursor: pointer;
     font-family: inherit;
   }
+  .font-controls .full-only { display: none; }
+  .font-controls.show .full-only { display: block; }
 
   /* 手机端 */
   @media (max-width: 600px) {
@@ -262,9 +263,8 @@
     .translate-panel { right: 1rem; left: 1rem; width: auto; top: 100px; max-height: 50vh; font-size: 0.85rem; }
     .full-panel { padding: 2rem 1rem; }
     .full-panel .content { max-width: 100%; font-size: 0.95rem; line-height: 2.2; }
-    .font-controls { bottom: 90px; right: 16px; width: 38px; align-items: center; }
+    .font-controls { bottom: 14px; right: 16px; }
     .font-controls button { width: 38px; height: 38px; font-size: 1.1rem; }
-    #musicBtn { bottom: 14px; right: 16px; width: 38px; height: 38px; font-size: 15px; }
     .full-panel .close-btn { top: 1rem; right: 1rem; width: 36px; height: 36px; font-size: 1rem; }
   }
 </style>
@@ -312,9 +312,10 @@
 </div>
 
 <div class="font-controls" id="fontControls">
-  <button onclick="toggleFullTranslate()">译</button>
-  <button onclick="changeFontSize(-0.1)">－</button>
-  <button onclick="changeFontSize(0.1)">＋</button>
+  <button class="full-only" onclick="toggleFullTranslate()">译</button>
+  <button class="full-only" onclick="changeFontSize(-0.1)">－</button>
+  <button class="full-only" onclick="changeFontSize(0.1)">＋</button>
+  <button id="musicBtn" onclick="toggleBgm()">🔇</button>
 </div>
 
 <div class="footer">
@@ -531,7 +532,6 @@
 </script>
 
 <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
-<button id="musicBtn" onclick="toggleBgm()" style="position:fixed;bottom:20px;right:30px;width:44px;height:44px;border-radius:50%;border:1px solid #8a7a5a;background:transparent;cursor:pointer;font-size:18px;z-index:999">🔇</button>
 <script>
 const bgm = document.getElementById('bgm');
 const musicBtn = document.getElementById('musicBtn');
