@@ -315,6 +315,7 @@
   <button class="full-only" onclick="toggleFullTranslate()">译</button>
   <button class="full-only" onclick="changeFontSize(-0.1)">－</button>
   <button class="full-only" onclick="changeFontSize(0.1)">＋</button>
+  <button id="themeBtn" onclick="toggleTheme()" title="切换白天/夜晚">🌙</button>
   <button id="musicBtn" onclick="toggleBgm()">🔇</button>
 </div>
 
@@ -513,8 +514,10 @@
     if (e.key === "ArrowLeft") document.getElementById("btnPrev").click();
   });
 
-  // 实时时钟 + 白天/夜晚自动切换
+  // 实时时钟 + 白天/夜晚切换
   const week = ["日","一","二","三","四","五","六"];
+  var autoTheme = true;
+
   function tick() {
     const n = new Date();
     document.getElementById("date").textContent =
@@ -523,10 +526,28 @@
     const m = String(n.getMinutes()).padStart(2,"0");
     const s = String(n.getSeconds()).padStart(2,"0");
     document.getElementById("clock").textContent = h + " : " + m + " : " + s;
-    // 6:00-18:00 白天，其余夜晚
-    const hour = n.getHours();
-    document.body.classList.toggle("day", hour >= 6 && hour < 18);
+    // 6:00-18:00 白天，其余夜晚；手动切换后不再自动
+    if (autoTheme) {
+      const hour = n.getHours();
+      document.body.classList.toggle("day", hour >= 6 && hour < 18);
+    }
+    updateThemeIcon();
   }
+
+  // 明暗手动切换
+  function toggleTheme() {
+    autoTheme = false;
+    document.body.classList.toggle("day");
+    updateThemeIcon();
+  }
+  function updateThemeIcon() {
+    var btn = document.getElementById("themeBtn");
+    if (!btn) return;
+    var isDay = document.body.classList.contains("day");
+    btn.textContent = isDay ? "☀️" : "🌙";
+    btn.title = isDay ? "当前：白天，点击切换夜晚" : "当前：夜晚，点击切换白天";
+  }
+
   tick();
   setInterval(tick, 1000);
 </script>
